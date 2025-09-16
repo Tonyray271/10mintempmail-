@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10MinInbox - Private, Unguessable Disposable Email</title>
+    <meta name="description" content="Get a completely private, unguessable temporary email for 10 minutes. Enhanced security with personal access tokens. No signup, no tracking, military-grade privacy.">
+    <meta name="keywords" content="private email, secure disposable email, unguessable email, temporary email, 10 minutes, enhanced privacy, no signup, token security">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="10MinInbox - Private, Unguessable Disposable Email">
+    <meta property="og:description" content="Get a completely private, unguessable temporary email for 10 minutes. Enhanced security with personal access tokens.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://10mintempmail.net">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📧</text></svg>">
+    
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="screen active">
+            <div class="loading-container">
+                <div class="loading-spinner"></div>
+                <h2>Creating your secure inbox...</h2>
+                <p>This will only take a moment</p>
+                <div class="loading-progress">
+                    <div class="progress-bar"></div>
+                </div>
+                <div class="loading-timeout-notice" style="display: none;">
+                    <p>Taking longer than expected? Don't worry, we'll switch to demo mode shortly.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Screen -->
+        <div id="errorScreen" class="screen">
+            <div class="container">
+                <div class="error-container">
+                    <div class="error-icon">⚠️</div>
+                    <h2>Oops! Something went wrong</h2>
+                    <p id="errorMessage">We're having trouble connecting to our email service.</p>
+                    <div class="error-actions">
+                        <button onclick="retryConnection()" class="btn btn-primary">Try Again</button>
+                        <button onclick="enterDemoMode()" class="btn btn-secondary">Continue with Demo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Application Screen -->
+        <div id="mainScreen" class="screen">
+            <!-- Header -->
+            <header class="header">
+                <div class="container">
+                    <div class="header-content">
+                        <h1 class="logo">10MinInbox</h1>
+                        <div class="trust-indicators">
+                            <span class="trust-item" title="Unguessable addresses with secure tokens">
+                                🔒 <span class="trust-text">Private & Unguessable</span>
+                            </span>
+                            <span class="trust-item" title="Personal access tokens protect your data">
+                                🛡️ <span class="trust-text">Token Protected</span>
+                            </span>
+                            <span class="trust-item" title="No tracking, no storage, secure deletion">
+                                💜 <span class="trust-text">Enhanced Privacy</span>  
+                            </span>
+                            <span class="trust-item" title="Auto-expiry with secure cleanup">
+                                ⚡ <span class="trust-text">Secure Auto-Delete</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="main-content">
+                <div class="container">
+                    <!-- Welcome Section -->
+                    <div id="welcomeSection" class="welcome-section active">
+                        <div class="welcome-content">
+                            <h2>Your Private Email Sanctuary</h2>
+                            <p class="subtitle">Get a completely private, unguessable email with personal access token protection. Enhanced security meets simplicity.</p>
+                            
+                            <button id="generateInboxBtn" onclick="generateInbox()" class="btn btn-primary btn-large">
+                                <span class="btn-text">Generate Private Inbox</span>
+                                <span class="btn-icon">🔒</span>
+                            </button>
+                            
+                            <div class="features-grid">
+                                <div class="feature-item">
+                                    <div class="feature-icon">🔐</div>
+                                    <h3>Unguessable Address</h3>
+                                    <p>Cryptographically secure email addresses that are impossible to guess or brute-force</p>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon">🛡️</div>
+                                    <h3>Token Protected</h3>
+                                    <p>Personal access tokens ensure only you can read your messages, even if address is known</p>
+                                </div>
+                                <div class="feature-item">
+                                    <div class="feature-icon">✨</div>
+                                    <h3>Military-Grade Privacy</h3>
+                                    <p>No signup, no tracking, secure token authentication, complete anonymity</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Active Inbox Section -->
+                    <div id="inboxSection" class="inbox-section">
+                        <div class="inbox-header">
+                            <div class="inbox-info">
+                                <h2>Your Temporary Inbox</h2>
+                                <div class="email-display">
+                                    <span id="emailAddress" class="email-address">loading...</span>
+                                    <button id="copyEmailBtn" onclick="copyEmail()" class="btn btn-copy" title="Copy email address">
+                                        <span class="copy-icon">📋</span>
+                                        <span class="copy-text">Copy</span>
+                                    </button>
+                                </div>
+                                <div id="demoNotice" class="demo-notice" style="display: none;">
+                                    <span class="demo-badge">Demo Mode</span>
+                                    <span>This is a demonstration. Real emails won't be received.</span>
+                                </div>
+                            </div>
+                            
+                            <div class="timer-container">
+                                <div class="countdown-timer">
+                                    <div class="timer-circle">
+                                        <svg width="80" height="80" viewBox="0 0 80 80">
+                                            <circle cx="40" cy="40" r="35" stroke="#e5e7eb" stroke-width="6" fill="none"/>
+                                            <circle id="timerProgress" cx="40" cy="40" r="35" stroke="url(#gradient)" stroke-width="6" 
+                                                    fill="none" stroke-dasharray="219.91" stroke-dashoffset="219.91" 
+                                                    transform="rotate(-90 40 40)" stroke-linecap="round"/>
+                                            <defs>
+                                                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                    <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+                                                    <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                                </linearGradient>
+                                            </defs>
+                                        </svg>
+                                        <div class="timer-text">
+                                            <span id="timerMinutes">10</span>
+                                            <span class="timer-separator">:</span>
+                                            <span id="timerSeconds">00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="timer-label">Time remaining</p>
+                            </div>
+                        </div>
+
+                        <div class="inbox-content">
+                            <div class="inbox-controls">
+                                <button onclick="refreshInbox()" class="btn btn-secondary" id="refreshBtn">
+                                    <span class="refresh-icon">🔄</span>
+                                    <span>Refresh</span>
+                                </button>
+                                <button onclick="startOver()" class="btn btn-outline">
+                                    <span>Start Over</span>
+                                </button>
+                            </div>
+
+                            <div class="messages-container">
+                                <div id="messagesArea" class="messages-area">
+                                    <div class="no-messages">
+                                        <div class="no-messages-icon">📬</div>
+                                        <h3>No messages yet</h3>
+                                        <p>Your inbox is ready! Send emails to your temporary address above.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expired Section -->
+                    <div id="expiredSection" class="expired-section">
+                        <div class="expired-content">
+                            <div class="expired-icon">⏰</div>
+                            <h2>Time's Up!</h2>
+                            <p>Your 10-minute inbox has expired and all data has been securely deleted.</p>
+                            <button onclick="startOver()" class="btn btn-primary">
+                                <span>Create New Inbox</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="container">
+                    <div class="footer-content">
+                        <p class="privacy-message">
+                            <strong>🔒 Enhanced Security:</strong> Unguessable addresses + personal access tokens = military-grade privacy. 
+                            No storage, no tracking, secure auto-deletion after 10 minutes.
+                        </p>
+                        <div class="footer-links">
+                            <a href="#" onclick="showPrivacyInfo()">Privacy Policy</a>
+                            <span class="separator">•</span>
+                            <a href="#" onclick="showAboutInfo()">About</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Message Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalSubject">Email Subject</h3>
+                <button onclick="closeModal()" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="message-meta">
+                    <div class="meta-row">
+                        <strong>From:</strong> <span id="modalFrom">sender@example.com</span>
+                    </div>
+                    <div class="meta-row">
+                        <strong>Date:</strong> <span id="modalDate">Just now</span>
+                    </div>
+                </div>
+                <div class="message-content">
+                    <div id="modalContent">Message content will appear here...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Container -->
+    <div id="notifications" class="notifications-container"></div>
+
+    <!-- JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
